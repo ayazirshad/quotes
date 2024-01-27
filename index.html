@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Comfortaa&family=Dancing+Script:wght@600&family=Honk&family=Moon+Dance&display=swap"
+      rel="stylesheet"
+    />
+    <title>Quotes</title>
+    <style>
+      body {
+        margin: 0px;
+        padding: 0px;
+        /* background: #141414; */
+      }
+      .main {
+        width: 100vw;
+        height: 100vh;
+        background: #212e3e;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .container {
+        background: linear-gradient(to right, #fd5e0e, #ef0f70);
+        height: 80%;
+        width: 70%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 6px;
+      }
+      .card {
+        height: 70%;
+        box-shadow: 15px 15px 20px rgba(0, 0, 0, 0.3);
+        background: #fff;
+        width: 80%;
+        display: flex;
+        flex-direction: column;
+        border-radius: 4px;
+        overflow: hidden;
+      }
+      .quote {
+        flex: 1 1 0%;
+        position: relative;
+        padding: 30px 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      #quote {
+        padding: 5px 40px;
+        font-family: "Dancing Script", cursive;
+        font-size: xx-large;
+        font-weight: bold;
+      }
+      #author {
+        padding: 10px 20px;
+        text-align: right;
+        font-family: "Comfortaa", sans-serif;
+      }
+
+      .qouteWrapper img {
+        margin-left: 20px;
+        height: 50px;
+        width: 50px;
+      }
+      .xLogoWrapper {
+        position: absolute;
+        top: 0;
+        height: 20px;
+        width: 20px;
+        margin: 12px;
+        right: 0;
+        padding: 10px;
+        border-radius: 50%;
+      }
+      .xLogoWrapper:hover {
+        background: #f96216c4;
+      }
+      #xLogo {
+        height: 20px;
+        width: 20px;
+      }
+      #xLogo:hover {
+        cursor: pointer;
+      }
+      #btn {
+        background: linear-gradient(to right, #ef0f70, #fd5e0e);
+        border: none;
+        padding: 8px 0;
+        color: #fff;
+        width: 100%;
+        font-family: "Honk", system-ui;
+        font-size: x-large;
+      }
+      #btn:hover {
+        background: linear-gradient(to right, #ca0d5f, #ca4a0b);
+        cursor: pointer;
+      }
+
+      @media (max-width: 576px) {
+        .main {
+          width: 100vw;
+          height: 100vh;
+          background: #212e3e;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+
+          /* padding: 8px; */
+        }
+        .container {
+          background: linear-gradient(to right, #fd5e0e, #ef0f70);
+          width: 100%;
+          display: flex;
+          margin: 8px;
+          justify-content: center;
+          align-items: center;
+          border-radius: 6px;
+          /* padding: 10px 4px; */
+        }
+        .card {
+          box-shadow: 15px 15px 20px rgba(0, 0, 0, 0.3);
+          background: #fff;
+          width: 100%;
+          margin: 0px 8px;
+          display: flex;
+          flex-direction: column;
+          border-radius: 4px;
+          overflow: hidden;
+        }
+      }
+      @media (max-width: 762px) {
+        #quote {
+          padding: 5px 40px;
+          font-family: "Dancing Script", cursive;
+          font-size: x-large;
+          font-weight: bold;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="main">
+      <div class="container">
+        <div class="card">
+          <div class="quote">
+            <div class="qouteWrapper">
+              <img src="./images/qouteIcon.png" alt="icon" />
+              <div id="quote"></div>
+            </div>
+            <div id="author"></div>
+            <div class="xLogoWrapper">
+              <img
+                src="./images/xLogo.png"
+                alt="xLogo"
+                id="xLogo"
+                title="tweetMe"
+              />
+            </div>
+          </div>
+          <button id="btn">New Quote</button>
+        </div>
+      </div>
+    </div>
+  </body>
+
+  <script>
+    let quotes = [];
+    let quote = document.getElementById("quote");
+    let author = document.getElementById("author");
+    let nextQuotebtn = document.getElementById("btn");
+    let tweetMe = document.getElementById("xLogo");
+
+    let qoutesData = "";
+    let randomNum;
+    const nextQuote = () => {
+      randomNum = Math.floor(Math.random() * 16);
+      qoutesData = quotes[randomNum];
+      quote.innerText = quotes[randomNum].text;
+      author.innerText = "by " + splitAuthorName(quotes[randomNum].author);
+    };
+
+    const splitAuthorName = (author) => {
+      const name = String(author).split(",");
+      return name[0] === "type.fit" ? "unknown" : name[0];
+    };
+
+    const fetchQuotes = async () => {
+      const data = await fetch("https://type.fit/api/quotes").then((res) =>
+        res.json()
+      );
+      quotes = data;
+      quote.innerText = quotes[0].text;
+      author.innerText = "by " + splitAuthorName(quotes[0].author);
+    };
+    fetchQuotes();
+    const tweetNow = () => {
+      let tweetPost = `https://twitter.com/intent/tweet?text=${qoutesData.text}`;
+      window.open(tweetPost);
+    };
+    tweetMe.addEventListener("click", tweetNow);
+    nextQuotebtn.addEventListener("click", nextQuote);
+  </script>
+</html>
